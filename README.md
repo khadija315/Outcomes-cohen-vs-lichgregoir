@@ -64,7 +64,3 @@ Outcomes-cohen-vs-lichgregoir/
 ├── README.md                  # Project documentation
 │
 └── .gitignore
-
----
-
-##  Test
