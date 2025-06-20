@@ -53,6 +53,7 @@ data<-read.table("clipboard", header=TRUE, sep="\t",dec=",", na.string="")
  data$UTIpostop <-as.factor (data$UTIpostop)
  data$SURGIND <-as.factor (data$SURGIND)
  data$VURRECG01 <-as.factor (data$VURRECG01)
+ data$REC011 <-as.factor (data$REC011)
 
 # install.packages("labelled")
 # Load the package
@@ -112,6 +113,7 @@ var_label(data$VURPHASE) <- "VUR timing"
 var_label(data$VURSIDE) <- "VUR side"
 var_label(data$SURGIND) <- "Indication for VUR Surgical Management"
 var_label(data$VURRECG01) <- "VUR recurrence defined as Grades 0–1 (no recurrence)"
+var_label(data$REC011) <- "VUR recurrence Grade>1 at VCUG performed at 12 months or after"
 
 # Check the label
 var_label(data$VURSIDE)
@@ -177,6 +179,7 @@ data$VURRECG01 <- recode(data$VURRECG01,
   `0` = "No recurrence",
   `1` = "Recurrence"
 )
+data$REC011 <- recode(data$REC011, `0` = "No recurrence", `1` = "Recurrence", `N/A` = "missing")
 
 --------
 # Variables to use for the matching:
@@ -280,7 +283,7 @@ factor_vars <- c("PREOPVURGRADE", "HISTOINJ", "PREOPRNPLN", "PREOPRNSCR", "VURSI
                  "GU90", "GUER30","GUER90", "HEMAT", "ILEUS", "INCCOMPBLEED", "INCCOMPINF", 
                  "INCCOMPSCAR", "NARC", "NONARC", "PAIN", "PROC365", "STENT", 
                  "UDR7M", "URCOMPCVUR", "URCOMPINJ", "URCOMPOBST", "URCOMPSTEN", 
-                 "UTIpostop", "SURGIND", "VURRECG01")
+                 "UTIpostop", "SURGIND", "VURRECG01", "REC011")
 
 all_vars <- c(numeric_vars, factor_vars)
 
@@ -346,7 +349,7 @@ factor_vars <- c("PREOPVURGRADE", "HISTOINJ", "PREOPRNPLN", "PREOPRNSCR", "VURSI
                  "GU90", "GUER30","GUER90", "HEMAT", "ILEUS", "INCCOMPBLEED", "INCCOMPINF", 
                  "INCCOMPSCAR", "NARC", "NONARC", "PAIN", "PROC365", "STENT", 
                  "UDR7M", "URCOMPCVUR", "URCOMPINJ", "URCOMPOBST", "URCOMPSTEN", 
-                 "UTIpostop", "SURGIND", "VURRECG01")
+                 "UTIpostop", "SURGIND", "VURRECG01" , "REC011")
 
 all_vars <- c(numeric_vars, factor_vars)
 
@@ -409,7 +412,7 @@ factor_vars <- c("PREOPVURGRADE", "HISTOINJ", "PREOPRNPLN", "PREOPRNSCR", "VURSI
                  "GU90", "GUER30", "GUER90", "HEMAT", "ILEUS", "INCCOMPBLEED", 
                  "INCCOMPINF", "INCCOMPSCAR", "NARC", "NONARC", "PAIN", "PROC365", 
                  "STENT", "UDR7M", "URCOMPCVUR", "URCOMPINJ", "URCOMPOBST", 
-                 "URCOMPSTEN", "UTIpostop", "SURGIND", "VURRECG01")
+                 "URCOMPSTEN", "UTIpostop", "SURGIND", "VURRECG01", "REC011")
 
 all_vars <- c(numeric_vars, factor_vars)
 
@@ -467,7 +470,7 @@ factor_vars <- c("PREOPVURGRADE", "HISTOINJ", "PREOPRNPLN", "PREOPRNSCR", "VURSI
                  "GU90", "GUER30", "GUER90", "HEMAT", "ILEUS", "INCCOMPBLEED", 
                  "INCCOMPINF", "INCCOMPSCAR", "NARC", "NONARC", "PAIN", "PROC365", 
                  "STENT", "UDR7M", "URCOMPCVUR", "URCOMPINJ", "URCOMPOBST", 
-                 "URCOMPSTEN", "UTIpostop", "SURGIND", "VURRECG01")
+                 "URCOMPSTEN", "UTIpostop", "SURGIND", "VURRECG01", "REC011")
 
 all_vars <- c(numeric_vars, factor_vars)
 
