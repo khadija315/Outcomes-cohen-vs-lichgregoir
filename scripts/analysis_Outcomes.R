@@ -326,6 +326,13 @@ results_numeric_combined <- do.call(rbind, lapply(results_numeric, function(x) {
 # Export the results
 write.csv(results_numeric_combined, "Numeric_Median_IQR.csv")
 
+----------------------------------------------------------------------------------------
+Note:
+For VUR recurrence : REC011
+matrix <- matrix(c(14, 90, 11, 158), nrow = 2, byrow = TRUE)
+ 
+# Chi-square test
+chisq.test(matrix)
 -------------------------------------------------------------------------------------------
 
 # Comparative descriptive statistics for the matched cohort (stratified by treatment group):
