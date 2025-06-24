@@ -324,82 +324,17 @@ results_numeric_combined <- do.call(rbind, lapply(results_numeric, function(x) {
 }))
 
 # Export the results
-write.csv(results_numeric_combined, "Numeric_Median_IQR.csv")
+write.csv(results_numeric_combined, "Numeric_Median_Original Cohort_Stratified_IQR.csv")
 
 ----------------------------------------------------------------------------------------
-Note:
-For VUR recurrence : REC011
+#Note:
+#For VUR recurrence : REC011
 matrix <- matrix(c(14, 90, 11, 158), nrow = 2, byrow = TRUE)
  
 # Chi-square test
 chisq.test(matrix)
 -------------------------------------------------------------------------------------------
 
-# Comparative descriptive statistics for the matched cohort (stratified by treatment group):
-
-# Descriptive analysis generating mean (SD) for numerical variables
-
-# Load the required package
-if (!requireNamespace("tableone", quietly = TRUE)) {
-  install.packages("tableone")
-}
-library(tableone)
-
-# Specify variables
-numeric_vars <- c("AGS", "BMI", "BLDLOSS", "CATHPERIOD", "FUPm", 
-                  "HOSPTIME", "OPRTIME", "UTIpostopFup", "UTIpostopT")
-
-factor_vars <- c("PREOPVURGRADE", "HISTOINJ", "PREOPRNPLN", "PREOPRNSCR", "VURSIDE", 
-                 "VURPHASE", "PREOPEPISODEn", "PREOPTYPEUn", "SURGTECHn2", "TRTn2", 
-                 "ANASTOMO", "BLDCOMPLEAK", "BLDCOMPRETN", "BLDCOMPVOID", "BLDSPASM", 
-                 "CATH", "Center", "CLAVIENCLASS", "EPIDURAL", "GENDER", "GU30", 
-                 "GU90", "GUER30","GUER90", "HEMAT", "ILEUS", "INCCOMPBLEED", "INCCOMPINF", 
-                 "INCCOMPSCAR", "NARC", "NONARC", "PAIN", "PROC365", "STENT", 
-                 "UDR7M", "URCOMPCVUR", "URCOMPINJ", "URCOMPOBST", "URCOMPSTEN", 
-                 "UTIpostop", "SURGIND", "VURRECG01" , "REC011")
-
-all_vars <- c(numeric_vars, factor_vars)
-
-# Create Table m
-tablem <- CreateTableOne(vars = all_vars, strata = "TRTn2", data = mdata, test = TRUE)
-
-# Print Table 1 with p-values
-print(tablem, showAllLevels = TRUE, pDigits = 3)
-
-# Convert TableOne to a matrix
-tablem_matrix <- print(tablem, showAllLevels = TRUE, pDigits = 3, quote = FALSE, noSpaces = TRUE)
-
-# Save the matrix as a CSV file
-write.csv(as.data.frame(tablem_matrix), file = "Tablem_descriptive.csv", row.names = TRUE)
-
-^^^^^^^^
-
-# Calculate median and IQR manually for numeric variables
-calc_median_iqr <- function(var, group) {
-  mdata %>%
-    group_by(.data[[group]]) %>%
-    summarise(
-      Median = median(.data[[var]], na.rm = TRUE),
-      Q1 = quantile(.data[[var]], 0.25, na.rm = TRUE),
-      Q3 = quantile(.data[[var]], 0.75, na.rm = TRUE)
-    )
-}
-
-# Loop through numeric variables and calculate median/IQR for treatment groups
-library(dplyr)
-results_numeric <- lapply(numeric_vars, calc_median_iqr, group = "TRTn2")
-names(results_numeric) <- numeric_vars
-
-# Combine numeric and categorical results
-results_numeric_combined <- do.call(rbind, lapply(results_numeric, function(x) {
-  x %>% mutate(Statistic = paste0(Median, " (", Q1, "-", Q3, ")")) %>%
-    select(Statistic)
-}))
-
-# Export the results
-write.csv(results_numeric_combined, "Numeric_mMedian_IQR.csv")
-
------------------------------------------------------------------------------------------
 # Descriptive statistics for the whole cohort (not stratified by treatment group):
 
 # Load the required package
@@ -457,65 +392,9 @@ rownames(results_numeric_combined) <- numeric_vars
 # Save numeric results to CSV
 write.csv(results_numeric_combined, "Numeric_Median_IQR_WholeCohort.csv", row.names = TRUE)
 
------------------------------------------------------------------------------------------
-# Descriptive statistics for the matched cohort (not stratified by treatment group):
-
-# Load the required package
-if (!requireNamespace("tableone", quietly = TRUE)) {
-  install.packages("tableone")
-}
-library(tableone)
-
-# Specify variables
-numeric_vars <- c("AGS", "BMI", "BLDLOSS", "CATHPERIOD", "FUPm", 
-                  "HOSPTIME", "OPRTIME", "UTIpostopFup", "UTIpostopT")
-
-factor_vars <- c("PREOPVURGRADE", "HISTOINJ", "PREOPRNPLN", "PREOPRNSCR", "VURSIDE", 
-                 "VURPHASE", "PREOPEPISODEn", "PREOPTYPEUn", "SURGTECHn2", "TRTn2", 
-                 "ANASTOMO", "BLDCOMPLEAK", "BLDCOMPRETN", "BLDCOMPVOID", "BLDSPASM", 
-                 "CATH", "Center", "CLAVIENCLASS", "EPIDURAL", "GENDER", "GU30", 
-                 "GU90", "GUER30", "GUER90", "HEMAT", "ILEUS", "INCCOMPBLEED", 
-                 "INCCOMPINF", "INCCOMPSCAR", "NARC", "NONARC", "PAIN", "PROC365", 
-                 "STENT", "UDR7M", "URCOMPCVUR", "URCOMPINJ", "URCOMPOBST", 
-                 "URCOMPSTEN", "UTIpostop", "SURGIND", "VURRECG01", "REC011")
-
-all_vars <- c(numeric_vars, factor_vars)
-
-# Create Table mn for the whole cohort
-tablemn <- CreateTableOne(vars = all_vars, data = mdata, test = FALSE)
-
-# Print Table mn without p-values (since there are no groups)
-print(tablemn, showAllLevels = TRUE)
-
-# Convert TableOne to a matrix
-tablemn_matrix <- print(tablemn, showAllLevels = TRUE, quote = FALSE, noSpaces = TRUE)
-
-# Save the matrix as a CSV file
-write.csv(as.data.frame(tablemn_matrix), file = "Tablemn_MatchedCohort.csv", row.names = TRUE)
-
-^^^^^^^^
-
-# Calculate median and IQR for numeric variables
-library(dplyr)
-results_numeric <- lapply(numeric_vars, function(var) {
-  mdata %>%
-    summarise(
-      Median = median(.data[[var]], na.rm = TRUE),
-      Q1 = quantile(.data[[var]], 0.25, na.rm = TRUE),
-      Q3 = quantile(.data[[var]], 0.75, na.rm = TRUE)
-    ) %>%
-    mutate(Statistic = paste0(Median, " (", Q1, "-", Q3, ")")) %>%
-    select(Statistic)
-})
-
-# Combine numeric results into a data frame
-results_numeric_combined <- do.call(rbind, results_numeric)
-rownames(results_numeric_combined) <- numeric_vars
-
-# Save numeric results to CSV
-write.csv(results_numeric_combined, "Numeric_mnMedian_IQR_MatchedCohort.csv", row.names = TRUE)
-
 ---------------------------------------------------------------------------------------------
+# Do the matching
+
 # Calculate the propensity score using logistic regression
 propensity_model <- glm(TRTn2 ~ PREOPVURGRADE + HISTOINJ + BMI + AGS + PREOPRNPLN + PREOPRNSCR + 
                          VURSIDE + VURPHASE + PREOPEPISODEn + PREOPTYPEUn + SURGTECHn2 + GENDER + UDR7M + SURGIND, 
@@ -529,6 +408,7 @@ propensity_model <- glm(TRTn2 ~ PREOPVURGRADE + HISTOINJ + BMI + AGS + PREOPRNPL
 
 install.packages("MatchIt")
 library(MatchIt)
+set.seed(123) # Fixes the sequence of "random" operations = the same individuals are matched every time
 
 m.out <- matchit(TRTn2 ~ PREOPVURGRADE + HISTOINJ + BMI  + AGS + PREOPRNPLN + PREOPRNSCR + VURSIDE + VURPHASE 
 + PREOPEPISODEn + PREOPTYPEUn + SURGTECHn2 + GENDER + UDR7M + SURGIND, data = data, method = "nearest", caliper = caliper_width)
@@ -536,6 +416,14 @@ summary(m.out, standardize=TRUE)
 
 # Extract the matched dataset from the matchit object
 mdata <- match.data(m.out)
+
+#Save the matched dataset to reuse
+saveRDS(mdata, "matched_sample.rds")
+
+# Load the matched dataset to use it later in any R session
+
+mdata <- readRDS("matched_sample.rds")
+
 
 > install.packages("tableone")
 library(tableone)
@@ -675,8 +563,10 @@ print(mean_smd)
 if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
 library(dplyr)
 
+library(tidyr)
+
 # Define numeric variables
-numeric_vars <- c('AGS', 'BMI')  # Replace with the numeric variables in your dataset
+numeric_vars <- c('AGS', 'BMI', 'BLDLOSS', 'FUPm', 'CATHPERIOD', 'OPRTIME', 'HOSPTIME')  # Replace with the numeric variables in your dataset
 
 # Calculate median and IQR for numeric variables stratified by treatment group
 numeric_summary_stratified <- mdata %>%
@@ -696,12 +586,138 @@ numeric_summary_stratified <- numeric_summary_stratified %>%
   mutate(IQR = paste0(Q1, " - ", Q3))  # Combine Q1 and Q3 into IQR column
 
 # Save the stratified summary as CSV
-write.csv(numeric_summary_stratified, "Numeric_Median_IQR_Stratifed_by_Treatment.csv", row.names = FALSE)
+write.csv(numeric_summary_stratified, "Numeric_Median_IQR_Matched_Stratifed_by_Treatment.csv", row.names = FALSE)
 
 # View the summary
 numeric_summary_stratified
+-----------------------------------------------------------------------------------------
+# After matching
+
+# Comparative descriptive statistics for the matched cohort (stratified by treatment group):
+
+# Descriptive analysis generating mean (SD) for numerical variables
+
+# Load the required package
+if (!requireNamespace("tableone", quietly = TRUE)) {
+  install.packages("tableone")
+}
+library(tableone)
+
+# Specify variables
+numeric_vars <- c("AGS", "BMI", "BLDLOSS", "CATHPERIOD", "FUPm", 
+                  "HOSPTIME", "OPRTIME", "UTIpostopFup", "UTIpostopT")
+
+factor_vars <- c("PREOPVURGRADE", "HISTOINJ", "PREOPRNPLN", "PREOPRNSCR", "VURSIDE", 
+                 "VURPHASE", "PREOPEPISODEn", "PREOPTYPEUn", "SURGTECHn2", "TRTn2", 
+                 "ANASTOMO", "BLDCOMPLEAK", "BLDCOMPRETN", "BLDCOMPVOID", "BLDSPASM", 
+                 "CATH", "Center", "CLAVIENCLASS", "EPIDURAL", "GENDER", "GU30", 
+                 "GU90", "GUER30","GUER90", "HEMAT", "ILEUS", "INCCOMPBLEED", "INCCOMPINF", 
+                 "INCCOMPSCAR", "NARC", "NONARC", "PAIN", "PROC365", "STENT", 
+                 "UDR7M", "URCOMPCVUR", "URCOMPINJ", "URCOMPOBST", "URCOMPSTEN", 
+                 "UTIpostop", "SURGIND", "VURRECG01" , "REC011")
+
+all_vars <- c(numeric_vars, factor_vars)
+
+# Create Table m
+tablem <- CreateTableOne(vars = all_vars, strata = "TRTn2", data = mdata, test = TRUE)
+
+# Print Table 1 with p-values
+print(tablem, showAllLevels = TRUE, pDigits = 3)
+
+# Convert TableOne to a matrix
+tablem_matrix <- print(tablem, showAllLevels = TRUE, pDigits = 3, quote = FALSE, noSpaces = TRUE)
+
+# Save the matrix as a CSV file
+write.csv(as.data.frame(tablem_matrix), file = "Tablem_descriptive.csv", row.names = TRUE)
+
+^^^^^^^^
+
+# Calculate median and IQR manually for numeric variables
+calc_median_iqr <- function(var, group) {
+  mdata %>%
+    group_by(.data[[group]]) %>%
+    summarise(
+      Median = median(.data[[var]], na.rm = TRUE),
+      Q1 = quantile(.data[[var]], 0.25, na.rm = TRUE),
+      Q3 = quantile(.data[[var]], 0.75, na.rm = TRUE)
+    )
+}
+
+# Loop through numeric variables and calculate median/IQR for treatment groups
+library(dplyr)
+results_numeric <- lapply(numeric_vars, calc_median_iqr, group = "TRTn2")
+names(results_numeric) <- numeric_vars
+
+# Combine numeric and categorical results
+results_numeric_combined <- do.call(rbind, lapply(results_numeric, function(x) {
+  x %>% mutate(Statistic = paste0(Median, " (", Q1, "-", Q3, ")")) %>%
+    select(Statistic)
+}))
+
+# Export the results
+write.csv(results_numeric_combined, "Numeric_mMedian_IQR.csv")
+
+-----------------------------------------------------------------------------------------
+# Descriptive statistics for the matched cohort (not stratified by treatment group):
+
+# Load the required package
+if (!requireNamespace("tableone", quietly = TRUE)) {
+  install.packages("tableone")
+}
+library(tableone)
+
+# Specify variables
+numeric_vars <- c("AGS", "BMI", "BLDLOSS", "CATHPERIOD", "FUPm", 
+                  "HOSPTIME", "OPRTIME", "UTIpostopFup", "UTIpostopT")
+
+factor_vars <- c("PREOPVURGRADE", "HISTOINJ", "PREOPRNPLN", "PREOPRNSCR", "VURSIDE", 
+                 "VURPHASE", "PREOPEPISODEn", "PREOPTYPEUn", "SURGTECHn2", "TRTn2", 
+                 "ANASTOMO", "BLDCOMPLEAK", "BLDCOMPRETN", "BLDCOMPVOID", "BLDSPASM", 
+                 "CATH", "Center", "CLAVIENCLASS", "EPIDURAL", "GENDER", "GU30", 
+                 "GU90", "GUER30", "GUER90", "HEMAT", "ILEUS", "INCCOMPBLEED", 
+                 "INCCOMPINF", "INCCOMPSCAR", "NARC", "NONARC", "PAIN", "PROC365", 
+                 "STENT", "UDR7M", "URCOMPCVUR", "URCOMPINJ", "URCOMPOBST", 
+                 "URCOMPSTEN", "UTIpostop", "SURGIND", "VURRECG01", "REC011")
+
+all_vars <- c(numeric_vars, factor_vars)
+
+# Create Table mn for the whole cohort
+tablemn <- CreateTableOne(vars = all_vars, data = mdata, test = FALSE)
+
+# Print Table mn without p-values (since there are no groups)
+print(tablemn, showAllLevels = TRUE)
+
+# Convert TableOne to a matrix
+tablemn_matrix <- print(tablemn, showAllLevels = TRUE, quote = FALSE, noSpaces = TRUE)
+
+# Save the matrix as a CSV file
+write.csv(as.data.frame(tablemn_matrix), file = "Tablemn_MatchedCohort.csv", row.names = TRUE)
+
+^^^^^^^^
+
+# Calculate median and IQR for numeric variables
+library(dplyr)
+results_numeric <- lapply(numeric_vars, function(var) {
+  mdata %>%
+    summarise(
+      Median = median(.data[[var]], na.rm = TRUE),
+      Q1 = quantile(.data[[var]], 0.25, na.rm = TRUE),
+      Q3 = quantile(.data[[var]], 0.75, na.rm = TRUE)
+    ) %>%
+    mutate(Statistic = paste0(Median, " (", Q1, "-", Q3, ")")) %>%
+    select(Statistic)
+})
+
+# Combine numeric results into a data frame
+results_numeric_combined <- do.call(rbind, results_numeric)
+rownames(results_numeric_combined) <- numeric_vars
+
+# Save numeric results to CSV
+write.csv(results_numeric_combined, "Numeric_mnMedian_IQR_MatchedCohort.csv", row.names = TRUE)
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# Study the matching balance - Love plot
+
 > install.packages("cobalt")
 library(cobalt)
 
@@ -715,8 +731,10 @@ bal$Balance <- bal$Balance[!rownames(bal$Balance) %in% "distance", ]
 love_plot <- love.plot(bal, stat = "mean.diffs", grid = TRUE, stars = "raw", 
           abs = FALSE, sample.names = c("Before Matching", "After Matching"))
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-NOTE: I changed the name of the variables in the dataset "data" to have them in the plot correctly, and them I run matchIt again
+###############################################################################################################
+###############################################################################################################
+
+## NOTE: I changed the name of the variables in the dataset "data" to have them in the plot correctly, and them I run matchIt again
 
 > # Load necessary library
 library(labelled)
@@ -896,8 +914,15 @@ p <- bal.plot(
 # Update treatment labels in the legend
 p + scale_fill_discrete(labels = c("Cohen group", "Lich-Gregoir group")) +
   scale_color_discrete(labels = c("Cohen group", "Lich-Gregoir group"))
-----------------------------------------------------------------------------------------
+
+###############################################################################################################
+###############################################################################################################
+
+
 # Univariable and multivariable analysis for the outcomes using the multivariable GEE model with a logit link function and an exchangeable correlation
+
+
+# %BLDCOMPRETN
 
 # Convert BLDCOMPRETN to numeric binary (0/1) in the matched dataset
 mdata$BLDCOMPRETN <- ifelse(mdata$BLDCOMPRETN == "Yes", 1, 0)
@@ -911,6 +936,7 @@ table(mdata$BLDCOMPRETN)  # Should show counts for 0 and 1
 mdata$TRTn2 <-as.factor (mdata$TRTn2)
 mdata$CATHPERIOD <-as.numeric (mdata$CATHPERIOD)
 mdata$OPRTIME <-as.numeric (mdata$OPRTIME)
+mdata$HOSPTIME <-as.numeric (mdata$HOSPTIME)
 mdata$STENT <-as.factor (mdata$STENT)
 mdata$Center <-as.factor (mdata$Center)
 str (mdata)
@@ -962,10 +988,19 @@ BLDCOMPRETN  ~ OPRTIME ,
 # Display the summary of the model
 summary(gee_model)
 
+gee_model <- geeglm(
+BLDCOMPRETN  ~ HOSPTIME , 
+  data = mdata, 
+  id = Center, 
+  family = binomial(link = "logit"), 
+  corstr = "exchangeable"
+)
+# Display the summary of the model
+summary(gee_model)
 
 # Fit the GEE model for multivariable analysis
 gee_model <- geeglm(
-  BLDCOMPRETN ~ TRTn2 + PS + STENT + CATHPERIOD + OPRTIME, 
+  BLDCOMPRETN ~ TRTn2 + PS + STENT + CATHPERIOD + OPRTIME + HOSPTIME, 
   data = mdata, 
   id = Center, 
   family = binomial(link = "logit"), 
@@ -979,12 +1014,15 @@ summary(gee_model)
 
 # Fit the GEE model for multivariate analysis
 gee_model <- geeglm(
-BLDCOMPRETN ~ TRTn2 + PS + STENT + CATHPERIOD + OPRTIME, 
+BLDCOMPRETN ~ TRTn2 + PS + STENT + CATHPERIOD + OPRTIME + HOSPTIME,  
   data = mdata, 
   id = Center, 
   family = binomial(link = "logit"), 
   corstr = "exchangeable"
 )
+# Display the summary of the model
+summary(gee_model)
+
 
 # Extract the coefficients, standard errors, and p-values
 summary_output <- summary(gee_model)$coefficients
@@ -1036,7 +1074,6 @@ print(results)
 mdata$BLDCOMPRETN <- ifelse(mdata$BLDCOMPRETN == "Yes", 1, 0)
 mdata$BLDSPASM <- ifelse(mdata$BLDSPASM == "Yes", 1, 0)
 mdata$HEMAT <- ifelse(mdata$HEMAT == "Yes", 1, 0)
-mdata$VURRECG01 <- ifelse(mdata$VURRECG01 == "Recurrence", 1, 0)
 mdata$UTIpostop <- ifelse(mdata$UTIpostop == "UTI", 1, 0)
 mdata$BLDCOMPVOID <- ifelse(mdata$BLDCOMPVOID == "Yes", 1, 0)
 mdata$BLDCOMPLEAK <- ifelse(mdata$BLDCOMPLEAK == "Yes", 1, 0)
@@ -1059,7 +1096,6 @@ mdata$PROC365 <- ifelse(mdata$PROC365 == "Yes", 1, 0)
 str(mdata$BLDCOMPRETN)
 str(mdata$BLDSPASM)
 str(mdata$HEMAT)
-str(mdata$VURRECG01)
 str(mdata$UTIpostop)
 str(mdata$BLDCOMPVOID)
 str(mdata$BLDCOMPLEAK)
@@ -1082,7 +1118,6 @@ str(mdata$PROC365)
 table(mdata$BLDCOMPRETN)
 table(mdata$BLDSPASM)
 table(mdata$HEMAT)
-table(mdata$VURRECG01)
 table(mdata$UTIpostop)
 table(mdata$BLDCOMPVOID)
 table(mdata$BLDCOMPLEAK)
@@ -1136,7 +1171,390 @@ p_value <- mean(boot_results >= auc_value)
 print(paste("AUC:", round(auc_value, 3)))
 print(paste("95% CI for AUC:", paste(round(ci_auc[1:3], 3), collapse = " - ")))
 print(paste("P-value:", round(p_value, 3)))
+
 ---------------------------------------------------------------------------------------
+# save workspace
+
+save.image("OUT.RData")
+load("OUT.RData")
+---------------------------------------------------------------------------------------
+####################################################################################################
+####################################################################################################
+
+## Repetitive Script for each outcome uivariable and multivariable analyses - To change it for each outcome
+# Note 1: Stenting was excluded from the multivariable analysis for incisional hernia due to zero occurrence of the variable among cases.
+# Note 2: Stenting was excluded from the multivariable analysis for anastomosis due to zero occurrence of the variable among cases.
+# Note 3: For UTIpostop outcome, ensure changing code 1 for UTI and 0 for No UTI
+
+
+# %BLDCOMPRETN
+# =================
+
+# Univariable and multivariable analysis for the outcomes using the multivariable GEE model with a logit link function and an exchangeable correlation
+
+
+# Convert BLDCOMPRETN to numeric binary (0/1) in the matched dataset
+mdata$BLDCOMPRETN <- ifelse(mdata$BLDCOMPRETN == "Yes", 1, 0)
+table(mdata$BLDCOMPRETN)  # Check distribution of "Yes" and "No"
+# Check structure of BLDCOMPRETN
+str(mdata$BLDCOMPRETN)
+# Check frequency of values
+table(mdata$BLDCOMPRETN)  # Should show counts for 0 and 1
+
+#Ensure that all the other variable are in the correct format
+mdata$TRTn2 <-as.factor (mdata$TRTn2)
+mdata$CATHPERIOD <-as.numeric (mdata$CATHPERIOD)
+mdata$OPRTIME <-as.numeric (mdata$OPRTIME)
+mdata$HOSPTIME <-as.numeric (mdata$HOSPTIME)
+mdata$STENT <-as.factor (mdata$STENT)
+mdata$Center <-as.factor (mdata$Center)
+str (mdata)
+
+#---------
+
+#Fit the GEE model for univariate analysis - TRTn2
+gee_model <- geeglm(
+BLDCOMPRETN  ~ TRTn2 , 
+  data = mdata, 
+  id = Center, 
+  family = binomial(link = "logit"), 
+  corstr = "exchangeable"
+)
+# Display the summary of the model
+summary(gee_model)
+
+# Extract the coefficients, standard errors, and p-values
+summary_output <- summary(gee_model)$coefficients
+coefficients <- summary_output[, "Estimate"]
+std_errors <- summary_output[, "Std.err"]
+p_values <- summary_output[, "Pr(>|W|)"]
+
+# Extract the names of the covariates
+covariate_names <- rownames(summary_output)[-1]  # Removing the intercept
+
+# Check the names of the coefficients
+print(covariate_names)
+
+# Remove intercept if it is included
+coefficients <- coefficients[-1]
+std_errors <- std_errors[-1]
+p_values <- p_values[-1]
+
+# Calculate the odds ratios (OR) and 95% confidence intervals (CI)
+OR <- exp(coefficients)
+CI_lower <- exp(coefficients - 1.96 * std_errors)
+CI_upper <- exp(coefficients + 1.96 * std_errors)
+
+# Check if lengths match
+print(length(coefficients))
+print(length(std_errors))
+print(length(p_values))
+
+# Create a data frame to display the results
+results <- data.frame(
+  Covariate = covariate_names,
+  OR = round(OR, 2),
+  CI = paste0("(", round(CI_lower, 2), " - ", round(CI_upper, 2), ")"),
+  P_value = round(p_values, 3)
+)
+
+# View the results
+print(results)
+
+#---------
+
+gee_model <- geeglm(
+BLDCOMPRETN  ~ STENT , 
+  data = mdata, 
+  id = Center, 
+  family = binomial(link = "logit"), 
+  corstr = "exchangeable"
+)
+# Display the summary of the model
+summary(gee_model)
+
+
+# Extract the coefficients, standard errors, and p-values
+summary_output <- summary(gee_model)$coefficients
+coefficients <- summary_output[, "Estimate"]
+std_errors <- summary_output[, "Std.err"]
+p_values <- summary_output[, "Pr(>|W|)"]
+
+# Extract the names of the covariates
+covariate_names <- rownames(summary_output)[-1]  # Removing the intercept
+
+# Check the names of the coefficients
+print(covariate_names)
+
+# Remove intercept if it is included
+coefficients <- coefficients[-1]
+std_errors <- std_errors[-1]
+p_values <- p_values[-1]
+
+# Calculate the odds ratios (OR) and 95% confidence intervals (CI)
+OR <- exp(coefficients)
+CI_lower <- exp(coefficients - 1.96 * std_errors)
+CI_upper <- exp(coefficients + 1.96 * std_errors)
+
+# Check if lengths match
+print(length(coefficients))
+print(length(std_errors))
+print(length(p_values))
+
+# Create a data frame to display the results
+results <- data.frame(
+  Covariate = covariate_names,
+  OR = round(OR, 2),
+  CI = paste0("(", round(CI_lower, 2), " - ", round(CI_upper, 2), ")"),
+  P_value = round(p_values, 3)
+)
+
+# View the results
+print(results)
+
+#---------
+
+gee_model <- geeglm(
+BLDCOMPRETN  ~ CATHPERIOD , 
+  data = mdata, 
+  id = Center, 
+  family = binomial(link = "logit"), 
+  corstr = "exchangeable"
+)
+# Display the summary of the model
+summary(gee_model)
+
+
+# Extract the coefficients, standard errors, and p-values
+summary_output <- summary(gee_model)$coefficients
+coefficients <- summary_output[, "Estimate"]
+std_errors <- summary_output[, "Std.err"]
+p_values <- summary_output[, "Pr(>|W|)"]
+
+# Extract the names of the covariates
+covariate_names <- rownames(summary_output)[-1]  # Removing the intercept
+
+# Check the names of the coefficients
+print(covariate_names)
+
+# Remove intercept if it is included
+coefficients <- coefficients[-1]
+std_errors <- std_errors[-1]
+p_values <- p_values[-1]
+
+# Calculate the odds ratios (OR) and 95% confidence intervals (CI)
+OR <- exp(coefficients)
+CI_lower <- exp(coefficients - 1.96 * std_errors)
+CI_upper <- exp(coefficients + 1.96 * std_errors)
+
+# Check if lengths match
+print(length(coefficients))
+print(length(std_errors))
+print(length(p_values))
+
+# Create a data frame to display the results
+results <- data.frame(
+  Covariate = covariate_names,
+  OR = round(OR, 2),
+  CI = paste0("(", round(CI_lower, 2), " - ", round(CI_upper, 2), ")"),
+  P_value = round(p_values, 3)
+)
+
+# View the results
+print(results)
+
+#---------
+
+
+gee_model <- geeglm(
+BLDCOMPRETN  ~ OPRTIME , 
+  data = mdata, 
+  id = Center, 
+  family = binomial(link = "logit"), 
+  corstr = "exchangeable"
+)
+# Display the summary of the model
+summary(gee_model)
+
+
+# Extract the coefficients, standard errors, and p-values
+summary_output <- summary(gee_model)$coefficients
+coefficients <- summary_output[, "Estimate"]
+std_errors <- summary_output[, "Std.err"]
+p_values <- summary_output[, "Pr(>|W|)"]
+
+# Extract the names of the covariates
+covariate_names <- rownames(summary_output)[-1]  # Removing the intercept
+
+# Check the names of the coefficients
+print(covariate_names)
+
+# Remove intercept if it is included
+coefficients <- coefficients[-1]
+std_errors <- std_errors[-1]
+p_values <- p_values[-1]
+
+# Calculate the odds ratios (OR) and 95% confidence intervals (CI)
+OR <- exp(coefficients)
+CI_lower <- exp(coefficients - 1.96 * std_errors)
+CI_upper <- exp(coefficients + 1.96 * std_errors)
+
+# Check if lengths match
+print(length(coefficients))
+print(length(std_errors))
+print(length(p_values))
+
+# Create a data frame to display the results
+results <- data.frame(
+  Covariate = covariate_names,
+  OR = round(OR, 2),
+  CI = paste0("(", round(CI_lower, 2), " - ", round(CI_upper, 2), ")"),
+  P_value = round(p_values, 3)
+)
+
+# View the results
+print(results)
+
+#---------
+
+gee_model <- geeglm(
+BLDCOMPRETN  ~ HOSPTIME , 
+  data = mdata, 
+  id = Center, 
+  family = binomial(link = "logit"), 
+  corstr = "exchangeable"
+)
+# Display the summary of the model
+summary(gee_model)
+
+
+# Extract the coefficients, standard errors, and p-values
+summary_output <- summary(gee_model)$coefficients
+coefficients <- summary_output[, "Estimate"]
+std_errors <- summary_output[, "Std.err"]
+p_values <- summary_output[, "Pr(>|W|)"]
+
+# Extract the names of the covariates
+covariate_names <- rownames(summary_output)[-1]  # Removing the intercept
+
+# Check the names of the coefficients
+print(covariate_names)
+
+# Remove intercept if it is included
+coefficients <- coefficients[-1]
+std_errors <- std_errors[-1]
+p_values <- p_values[-1]
+
+# Calculate the odds ratios (OR) and 95% confidence intervals (CI)
+OR <- exp(coefficients)
+CI_lower <- exp(coefficients - 1.96 * std_errors)
+CI_upper <- exp(coefficients + 1.96 * std_errors)
+
+# Check if lengths match
+print(length(coefficients))
+print(length(std_errors))
+print(length(p_values))
+
+# Create a data frame to display the results
+results <- data.frame(
+  Covariate = covariate_names,
+  OR = round(OR, 2),
+  CI = paste0("(", round(CI_lower, 2), " - ", round(CI_upper, 2), ")"),
+  P_value = round(p_values, 3)
+)
+
+# View the results
+print(results)
+
+#---------
+
+# Fit the GEE model for multivariable analysis
+gee_model <- geeglm(
+  BLDCOMPRETN ~ TRTn2 + PS + STENT + CATHPERIOD + OPRTIME + HOSPTIME, 
+  data = mdata, 
+  id = Center, 
+  family = binomial(link = "logit"), 
+  corstr = "exchangeable"
+)
+# Display the summary of the model
+summary(gee_model)
+
+
+# Extract the coefficients, standard errors, and p-values
+summary_output <- summary(gee_model)$coefficients
+coefficients <- summary_output[, "Estimate"]
+std_errors <- summary_output[, "Std.err"]
+p_values <- summary_output[, "Pr(>|W|)"]
+
+# Extract the names of the covariates
+covariate_names <- rownames(summary_output)[-1]  # Removing the intercept
+
+# Check the names of the coefficients
+print(covariate_names)
+
+# Remove intercept if it is included
+coefficients <- coefficients[-1]
+std_errors <- std_errors[-1]
+p_values <- p_values[-1]
+
+# Calculate the odds ratios (OR) and 95% confidence intervals (CI)
+OR <- exp(coefficients)
+CI_lower <- exp(coefficients - 1.96 * std_errors)
+CI_upper <- exp(coefficients + 1.96 * std_errors)
+
+# Check if lengths match
+print(length(coefficients))
+print(length(std_errors))
+print(length(p_values))
+
+# Create a data frame to display the results
+results <- data.frame(
+  Covariate = covariate_names,
+  OR = round(OR, 2),
+  CI = paste0("(", round(CI_lower, 2), " - ", round(CI_upper, 2), ")"),
+  P_value = round(p_values, 3)
+)
+
+# View the results
+print(results)
+
+#---------
+
+# Check the performance of the multivariate model using AUC, 95% CI of AUC and p-value
+
+# Ensure predicted probabilities are numeric
+predicted_probs <- as.numeric(predict(gee_model, type = "response"))
+
+# Extract observed outcomes
+observed_outcomes <- mdata$BLDCOMPRETN
+
+# Calculate ROC and AUC
+roc_curve <- roc(observed_outcomes, predicted_probs)
+
+# Extract AUC
+auc_value <- auc(roc_curve)
+
+# Calculate 95% CI for AUC using bootstrapping
+ci_auc <- ci.auc(roc_curve, method = "bootstrap", boot.n = 2000)
+
+# Perform p-value test manually (AUC = 0.5 as the null hypothesis)
+boot_results <- replicate(2000, {
+  shuffled_outcomes <- sample(observed_outcomes)  # Shuffle outcomes
+  roc_shuffled <- roc(shuffled_outcomes, predicted_probs)
+  auc(roc_shuffled)
+})
+
+# Calculate p-value as the proportion of bootstrap AUCs >= observed AUC
+p_value <- mean(boot_results >= auc_value)
+
+# Print the results
+print(paste("AUC:", round(auc_value, 3)))
+print(paste("95% CI for AUC:", paste(round(ci_auc[1:3], 3), collapse = " - ")))
+print(paste("P-value:", round(p_value, 3)))
+
+####################################################################################################
+####################################################################################################
+
 # Analysis for postoperative pain and analgesia
 
 # Exclude cases where EPIDURAL is "Yes"
@@ -1371,7 +1789,7 @@ Lich-Gregoir group: #00008B (Dark Blue)
 
 
 -----------------------------------------------------------------------------------------
-Rosenbaum’s sensitivity analysis
+# Rosenbaum’s sensitivity analysis
 -----------------------------------------
 #Identify the Outcome Variables
 BLDSPASM
@@ -1410,7 +1828,6 @@ mdata <- match.data(m.out)
 mdata$BLDCOMPRETN <- ifelse(mdata$BLDCOMPRETN == "Yes", 1, 0)
 mdata$BLDSPASM <- ifelse(mdata$BLDSPASM == "Yes", 1, 0)
 mdata$HEMAT <- ifelse(mdata$HEMAT == "Yes", 1, 0)
-mdata$VURRECG01 <- ifelse(mdata$VURRECG01 == "Recurrence", 1, 0)
 mdata$UTIpostop <- ifelse(mdata$UTIpostop == "UTI", 1, 0)
 mdata$BLDCOMPVOID <- ifelse(mdata$BLDCOMPVOID == "Yes", 1, 0)
 mdata$BLDCOMPLEAK <- ifelse(mdata$BLDCOMPLEAK == "Yes", 1, 0)
@@ -1431,7 +1848,7 @@ mdata$PROC365 <- ifelse(mdata$PROC365 == "Yes", 1, 0)
 
 # Primal analysis
 ------------------
-# Assuming m.out is the MatchIt object and 'BLDCOMPRETN ' is your binary outcome variable
+# Assuming m.out is the MatchIt object and 'BLDCOMPVOID' is your binary outcome variable
 # Extract matched pairs for outcomes and filter those who did not get matched (NA values)
 > m.pairs <- cbind(
     mdata[row.names(m.out$match.matrix), 'BLDCOMPVOID'],  # Replace 'OUTCOME_VAR' with your binary outcome
@@ -1564,346 +1981,7 @@ p <- bal.plot(
 # Update treatment labels in the legend
 p + scale_fill_discrete(labels = c("Cohen group", "Lich-Gregoir group")) +
   scale_color_discrete(labels = c("Cohen group", "Lich-Gregoir group"))
-
----------------------------------------------------------------------------------------------------------------
-#Subgroup analysis for the treatment effect ONLY: (NOT APPLICABLE - WRONG HYPOTHESIS)
-----------------------------------------------------------------------------------------
-
-To generate the mdata if needed:
-
-m.out <- matchit(TRTn2 ~ PREOPVURGRADE + HISTOINJ + BMI  + AGS + PREOPRNPLN + PREOPRNSCR + 
-VURSIDE + VURPHASE  + PREOPEPISODEn + PREOPTYPEUn + SURGTECHn2 + GENDER + 
-UDR7M + SURGIND, data = data, method = "nearest", caliper = caliper_width)
-
-summary(m.out, standardize=TRUE)
-mdata <- match.data(m.out)
-str(mdata)
-
-#Subgroup analysis by VUR recurrence and postoperative symptomatic UTIs
-
-#Ensure that all the other variable are in the correct format
-mdata$VURRECG01  <-as.factor (mdata$VURRECG01)
-mdata$UTIpostop  <-as.factor (mdata$UTIpostop)
-mdata$TRTn2 <-as.factor (mdata$TRTn2)
-mdata$CATHPERIOD <-as.numeric (mdata$CATHPERIOD)
-mdata$OPRTIME <-as.numeric (mdata$OPRTIME)
-mdata$STENT <-as.factor (mdata$STENT)
-mdata$Center <-as.factor (mdata$Center)
-
-# Convert covariates to numeric binary (0/1) in the matched dataset
-mdata$BLDCOMPRETN <- ifelse(mdata$BLDCOMPRETN == "Yes", 1, 0)
-mdata$BLDSPASM <- ifelse(mdata$BLDSPASM == "Yes", 1, 0)
-mdata$HEMAT <- ifelse(mdata$HEMAT == "Yes", 1, 0)
-mdata$BLDCOMPVOID <- ifelse(mdata$BLDCOMPVOID == "Yes", 1, 0)
-mdata$BLDCOMPLEAK <- ifelse(mdata$BLDCOMPLEAK == "Yes", 1, 0)
-mdata$URCOMPOBST <- ifelse(mdata$URCOMPOBST == "Yes", 1, 0)
-mdata$URCOMPINJ <- ifelse(mdata$URCOMPINJ == "Yes", 1, 0)
-mdata$URCOMPSTEN <- ifelse(mdata$URCOMPSTEN == "Yes", 1, 0)
-mdata$INCCOMPBLEED <- ifelse(mdata$INCCOMPBLEED == "Yes", 1, 0)
-mdata$INCCOMPINF <- ifelse(mdata$INCCOMPINF == "Yes", 1, 0)
-mdata$INCCOMPSCAR <- ifelse(mdata$INCCOMPSCAR == "Yes", 1, 0)
-mdata$ILEUS <- ifelse(mdata$ILEUS == "Yes", 1, 0)
-mdata$ANASTOMO <- ifelse(mdata$ANASTOMO == "Yes", 1, 0)
-mdata$URCOMPCVUR <- ifelse(mdata$URCOMPCVUR == "Yes", 1, 0)
-mdata$GU30 <- ifelse(mdata$GU30 == "Yes", 1, 0)
-mdata$GU90 <- ifelse(mdata$GU90 == "Yes", 1, 0)
-mdata$GUER30 <- ifelse(mdata$GUER30 == "Yes", 1, 0)
-mdata$GUER90 <- ifelse(mdata$GUER90 == "Yes", 1, 0)
-mdata$PROC365 <- ifelse(mdata$PROC365 == "Yes", 1, 0)
-
-str (mdata)
-
-
-#2# Subgroup analysis : Postoperative symptomatic UTIs (Similar steps as subgroup analysis for VUR recurrence)
-
-# Subset data for each level of VURRECG01
-mdata_0 <- subset(mdata, UTIpostop == 0)
-mdata_1 <- subset(mdata, UTIpostop == 1)
-
-
-#1# Subgroup analysis : VUR recurrence
-
-# Subset data for each level of VURRECG01
-mdata_0 <- subset(mdata, VURRECG01 == 0)
-mdata_1 <- subset(mdata, VURRECG01 == 1)
-
-library(geepack)
-
-
-# Fit GEE models for each subset
-gee_model_0 <- geeglm(
-  BLDCOMPRETN ~ TRTn2,
-  data = mdata_0,
-  id = Center,
-  family = binomial(link = "logit"),
-  corstr = "exchangeable"
-)
-
-# Extract the coefficients, standard errors, and p-values
-summary_output <- summary(gee_model_0)$coefficients
-coefficients <- summary_output[, "Estimate"]
-std_errors <- summary_output[, "Std.err"]
-p_values <- summary_output[, "Pr(>|W|)"]
-
-# Extract the names of the covariates
-covariate_names <- rownames(summary_output)[-1]  # Removing the intercept
-
-# Check the names of the coefficients
-print(covariate_names)
-
-# Remove intercept if it is included
-coefficients <- coefficients[-1]
-std_errors <- std_errors[-1]
-p_values <- p_values[-1]
-
-# Calculate the odds ratios (OR) and 95% confidence intervals (CI)
-OR <- exp(coefficients)
-CI_lower <- exp(coefficients - 1.96 * std_errors)
-CI_upper <- exp(coefficients + 1.96 * std_errors)
-
-# Check if lengths match
-print(length(coefficients))
-print(length(std_errors))
-print(length(p_values))
-
-# Create a data frame to display the results
-results <- data.frame(
-  Covariate = covariate_names,
-  OR = round(OR, 2),
-  CI = paste0("(", round(CI_lower, 2), " - ", round(CI_upper, 2), ")"),
-  P_value = round(p_values, 3)
-)
-
-# View the results
-print(results)
-
-----------------------------------------------------------
-# Fit GEE models for each subset
-gee_model_1 <- geeglm(
-  BLDCOMPRETN ~ TRTn2,
-  data = mdata_1,
-  id = Center,
-  family = binomial(link = "logit"),
-  corstr = "exchangeable"
-)
-
-# Extract the coefficients, standard errors, and p-values
-summary_output <- summary(gee_model_1)$coefficients
-coefficients <- summary_output[, "Estimate"]
-std_errors <- summary_output[, "Std.err"]
-p_values <- summary_output[, "Pr(>|W|)"]
-
-# Extract the names of the covariates
-covariate_names <- rownames(summary_output)[-1]  # Removing the intercept
-
-# Check the names of the coefficients
-print(covariate_names)
-
-# Remove intercept if it is included
-coefficients <- coefficients[-1]
-std_errors <- std_errors[-1]
-p_values <- p_values[-1]
-
-# Calculate the odds ratios (OR) and 95% confidence intervals (CI)
-OR <- exp(coefficients)
-CI_lower <- exp(coefficients - 1.96 * std_errors)
-CI_upper <- exp(coefficients + 1.96 * std_errors)
-
-# Check if lengths match
-print(length(coefficients))
-print(length(std_errors))
-print(length(p_values))
-
-# Create a data frame to display the results
-results <- data.frame(
-  Covariate = covariate_names,
-  OR = round(OR, 2),
-  CI = paste0("(", round(CI_lower, 2), " - ", round(CI_upper, 2), ")"),
-  P_value = round(p_values, 3)
-)
-
-# View the results
-print(results)
-
---------------------------------------------------------------------------------------
-
-# Fit the GEE model for multivariable analysis
-gee_model_0 <- geeglm(
-  BLDCOMPRETN ~ TRTn2 + PS + STENT + CATHPERIOD + OPRTIME, 
-  data = mdata_0, 
-  id = Center, 
-  family = binomial(link = "logit"), 
-  corstr = "exchangeable"
-)
-
-# Extract the coefficients, standard errors, and p-values
-summary_output <- summary(gee_model_0)$coefficients
-coefficients <- summary_output[, "Estimate"]
-std_errors <- summary_output[, "Std.err"]
-p_values <- summary_output[, "Pr(>|W|)"]
-
-# Extract the names of the covariates
-covariate_names <- rownames(summary_output)[-1]  # Removing the intercept
-
-# Check the names of the coefficients
-print(covariate_names)
-
-# Remove intercept if it is included
-coefficients <- coefficients[-1]
-std_errors <- std_errors[-1]
-p_values <- p_values[-1]
-
-# Calculate the odds ratios (OR) and 95% confidence intervals (CI)
-OR <- exp(coefficients)
-CI_lower <- exp(coefficients - 1.96 * std_errors)
-CI_upper <- exp(coefficients + 1.96 * std_errors)
-
-# Check if lengths match
-print(length(coefficients))
-print(length(std_errors))
-print(length(p_values))
-
-# Create a data frame to display the results
-results <- data.frame(
-  Covariate = covariate_names,
-  OR = round(OR, 2),
-  CI = paste0("(", round(CI_lower, 2), " - ", round(CI_upper, 2), ")"),
-  P_value = round(p_values, 3)
-)
-
-# View the results
-print(results)
-
----------------------------------------------------------
-
-# Fit the GEE model for multivariable analysis
-gee_model_1 <- geeglm(
-  BLDCOMPRETN ~ TRTn2 + PS + STENT + CATHPERIOD + OPRTIME, 
-  data = mdata_1, 
-  id = Center, 
-  family = binomial(link = "logit"), 
-  corstr = "exchangeable"
-)
-
-# Extract the coefficients, standard errors, and p-values
-summary_output <- summary(gee_model_0)$coefficients
-coefficients <- summary_output[, "Estimate"]
-std_errors <- summary_output[, "Std.err"]
-p_values <- summary_output[, "Pr(>|W|)"]
-
-# Extract the names of the covariates
-covariate_names <- rownames(summary_output)[-1]  # Removing the intercept
-
-# Check the names of the coefficients
-print(covariate_names)
-
-# Remove intercept if it is included
-coefficients <- coefficients[-1]
-std_errors <- std_errors[-1]
-p_values <- p_values[-1]
-
-# Calculate the odds ratios (OR) and 95% confidence intervals (CI)
-OR <- exp(coefficients)
-CI_lower <- exp(coefficients - 1.96 * std_errors)
-CI_upper <- exp(coefficients + 1.96 * std_errors)
-
-# Check if lengths match
-print(length(coefficients))
-print(length(std_errors))
-print(length(p_values))
-
-# Create a data frame to display the results
-results <- data.frame(
-  Covariate = covariate_names,
-  OR = round(OR, 2),
-  CI = paste0("(", round(CI_lower, 2), " - ", round(CI_upper, 2), ")"),
-  P_value = round(p_values, 3)
-)
-
-# View the results
-print(results)
-
-
-
 ----------------------------------------------------------------------------------------------------------------
-#To save the R commands: - not perfecly work , some mannual change to the document to implement
-
-# Clear the R console history
-flush.console()
-
-# Clear the history file (deletes old history)
-file.remove(".Rhistory")
-
-# Load necessary libraries
-library(officer)
-library(flextable)
-library(magrittr)
-
-# Create a Word document
-doc <- read_docx()
-
-# Save the Word document (empty at this point)
-print(doc, target = "Output_VUR_Article_2.docx")
-
-# Save the current session history to a temporary file (after clearing old history)
-history_file <- tempfile()  # Create a temporary file to store history
-savehistory(history_file)   # Save current session's history to this file
-
-# Add a new command to the history file
-writeLines("cat('New Command: Example of adding content to the session history')", history_file, append = TRUE)
-
-# Create a Word document with code content
-doc <- doc %>%
-  body_add_par("Code used to create this document", style = "heading 1") %>%
-  body_add_par("# Clear the R console history", style = "Normal") %>%
-  body_add_par("flush.console()", style = "Normal") %>%
-  body_add_par("# Clear the history file (deletes old history)", style = "Normal") %>%
-  body_add_par("file.remove('.Rhistory')", style = "Normal") %>%
-  body_add_par("# Load necessary libraries", style = "Normal") %>%
-  body_add_par("library(officer)", style = "Normal") %>%
-  body_add_par("library(flextable)", style = "Normal") %>%
-  body_add_par("library(magrittr)", style = "Normal") %>%
-  body_add_par("# Create a Word document", style = "Normal") %>%
-  body_add_par("doc <- read_docx()", style = "Normal") %>%
-  body_add_par("# Save the Word document (empty at this point)", style = "Normal") %>%
-  body_add_par("print(doc, target = 'Output_VUR_Article_2.docx')", style = "Normal") %>%
-  body_add_par("# Save the current session history to a temporary file (after clearing old history)", style = "Normal") %>%
-  body_add_par("history_file <- tempfile()", style = "Normal") %>%
-  body_add_par("savehistory(history_file)", style = "Normal") %>%
-body_add_par("# New Command Example", style = "Normal") %>% 
-  body_add_par("cat('New Command: Example of adding content to the session history')", style = "Normal")
-
-# Add the second section about copying content
-doc <- doc %>%
-  body_add_par("Code used to copy content to this document", style = "heading 1") %>%
-  body_add_par("# Read the commands from the history file", style = "Normal") %>%
-  body_add_par("commands <- readLines(history_file)", style = "Normal") %>%
-  body_add_par("# Add commands from the current session to the Word document", style = "Normal") %>%
-  body_add_par("for (cmd in commands) { doc <- doc %>% body_add_par(cmd, style = 'Normal') }", style = "Normal") %>%
-  body_add_par("# Save the Word document", style = "Normal") %>%
-  body_add_par("print(doc, target = 'Output_VUR_Article_2.docx')", style = "Normal")
-
-# Add the third section about copying content
-doc <- doc %>%
-  body_add_par("All commands in the current session", style = "heading 1")
-
-# Read the commands from the history file
-commands <- readLines(history_file)  # Read all commands
-
-... write the commands
-...
-...
-
-
-# Add commands from the current session to the Word document
-for (cmd in commands) {
-  doc <- doc %>%
-    body_add_par(cmd, style = "Normal")
-}
-
-# Save the Word document
-print(doc, target = "Output_VUR_Article_2.docx")
-
 
 -----------------------------------------------------------------------------------------------
 #Secondary objective: Association between Complications, Readmissions, ER visits and Reoperations
@@ -2012,7 +2090,6 @@ mdata$GUER30 <- ifelse(mdata$GUER30 == "Yes", 1, 0)
 mdata$GUER90 <- ifelse(mdata$GUER90 == "Yes", 1, 0)
 mdata$PROC365 <- ifelse(mdata$PROC365 == "Yes", 1, 0)
 
-mdata_clean
 
 mdata_clean$GU30 <- ifelse(mdata_clean$GU30 == "Yes", 1, 0)
 mdata_clean$GU90 <- ifelse(mdata_clean$GU90 == "Yes", 1, 0)
@@ -2025,11 +2102,11 @@ mdata_clean$PROC365 <- ifelse(mdata_clean$PROC365 == "Yes", 1, 0)
 install.packages("geepack")
 library(geepack)
 
-NOTE : Use  mdata_clean for the variables: CLAVIENCLASS2, URCOMPCVUR
+#NOTE : Use  mdata_clean for the variables: CLAVIENCLASS2, URCOMPCVUR
 
 # Fit the GEE model in univariate analysis
 gee_model <- geeglm(
-  GU30 ~ CLAVIENCLASS2,
+  GU30 ~ URCOMPCVUR,
   data = mdata_clean,
   id = Center,           # Account for clustering by Center
   family = binomial(link = "logit") # Binary outcome with logit link
@@ -2038,7 +2115,7 @@ gee_model <- geeglm(
 
 # Fit the GEE model in multivariate analysis
 gee_model <- geeglm(
-  GU30 ~ CLAVIENCLASS2 + PS + TRTn2 + CATHPERIOD + STENT + OPRTIME ,
+  GU30 ~ URCOMPCVUR + PS + TRTn2 + CATHPERIOD + STENT + OPRTIME + HOSPTIME,
   data = mdata_clean,
   id = Center,           # Account for clustering by Center
   family = binomial(link = "logit") # Binary outcome with logit link
@@ -2046,7 +2123,8 @@ gee_model <- geeglm(
 
 ---------------
 
-NOTE : Use  mdata for the other variables
+#NOTE : Use  mdata for the other variables
+#NOTE : Remove STENT from the multivariable analysis for the variables: INCCOMPSCAR, ANASTOMO
 
 # Fit the GEE model in univariate analysis
 gee_model <- geeglm(
@@ -2059,7 +2137,7 @@ gee_model <- geeglm(
 
 # Fit the GEE model in multivariate analysis
 gee_model <- geeglm(
-  GU30 ~ BLDCOMPRETN + PS + TRTn2 + CATHPERIOD + STENT + OPRTIME ,
+  GU30 ~ BLDCOMPRETN + PS + TRTn2 + CATHPERIOD + STENT + OPRTIME + HOSPTIME,
   data = mdata,
   id = Center,           # Account for clustering by Center
   family = binomial(link = "logit") # Binary outcome with logit link
@@ -2128,7 +2206,6 @@ Test them but not for the report:
 
 BLDSPASM
 HEMAT
-VURRECG01
 UTIpostop
 
 Associations with:
@@ -2175,5 +2252,87 @@ print(paste("AUC:", round(auc_value, 3)))
 print(paste("95% CI for AUC:", paste(round(ci_auc[1:3], 3), collapse = " - ")))
 print(paste("P-value:", round(p_value, 3)))
 
+
+//////////////////DRAFT ///////////////////////////////////DRAFT ///////////////////////////////////DRAFT /////////////////
+
+#To save the R commands: - not perfecly work , some mannual change to the document to implement
+
+# Clear the R console history
+flush.console()
+
+# Clear the history file (deletes old history)
+file.remove(".Rhistory")
+
+# Load necessary libraries
+library(officer)
+library(flextable)
+library(magrittr)
+
+# Create a Word document
+doc <- read_docx()
+
+# Save the Word document (empty at this point)
+print(doc, target = "Output_VUR_Article_2.docx")
+
+# Save the current session history to a temporary file (after clearing old history)
+history_file <- tempfile()  # Create a temporary file to store history
+savehistory(history_file)   # Save current session's history to this file
+
+# Add a new command to the history file
+writeLines("cat('New Command: Example of adding content to the session history')", history_file, append = TRUE)
+
+# Create a Word document with code content
+doc <- doc %>%
+  body_add_par("Code used to create this document", style = "heading 1") %>%
+  body_add_par("# Clear the R console history", style = "Normal") %>%
+  body_add_par("flush.console()", style = "Normal") %>%
+  body_add_par("# Clear the history file (deletes old history)", style = "Normal") %>%
+  body_add_par("file.remove('.Rhistory')", style = "Normal") %>%
+  body_add_par("# Load necessary libraries", style = "Normal") %>%
+  body_add_par("library(officer)", style = "Normal") %>%
+  body_add_par("library(flextable)", style = "Normal") %>%
+  body_add_par("library(magrittr)", style = "Normal") %>%
+  body_add_par("# Create a Word document", style = "Normal") %>%
+  body_add_par("doc <- read_docx()", style = "Normal") %>%
+  body_add_par("# Save the Word document (empty at this point)", style = "Normal") %>%
+  body_add_par("print(doc, target = 'Output_VUR_Article_2.docx')", style = "Normal") %>%
+  body_add_par("# Save the current session history to a temporary file (after clearing old history)", style = "Normal") %>%
+  body_add_par("history_file <- tempfile()", style = "Normal") %>%
+  body_add_par("savehistory(history_file)", style = "Normal") %>%
+body_add_par("# New Command Example", style = "Normal") %>% 
+  body_add_par("cat('New Command: Example of adding content to the session history')", style = "Normal")
+
+# Add the second section about copying content
+doc <- doc %>%
+  body_add_par("Code used to copy content to this document", style = "heading 1") %>%
+  body_add_par("# Read the commands from the history file", style = "Normal") %>%
+  body_add_par("commands <- readLines(history_file)", style = "Normal") %>%
+  body_add_par("# Add commands from the current session to the Word document", style = "Normal") %>%
+  body_add_par("for (cmd in commands) { doc <- doc %>% body_add_par(cmd, style = 'Normal') }", style = "Normal") %>%
+  body_add_par("# Save the Word document", style = "Normal") %>%
+  body_add_par("print(doc, target = 'Output_VUR_Article_2.docx')", style = "Normal")
+
+# Add the third section about copying content
+doc <- doc %>%
+  body_add_par("All commands in the current session", style = "heading 1")
+
+# Read the commands from the history file
+commands <- readLines(history_file)  # Read all commands
+
+... write the commands
+...
+...
+
+
+# Add commands from the current session to the Word document
+for (cmd in commands) {
+  doc <- doc %>%
+    body_add_par(cmd, style = "Normal")
+}
+
+# Save the Word document
+print(doc, target = "Output_VUR_Article_2.docx")
+
+//////////////////DRAFT ///////////////////////////////////DRAFT ///////////////////////////////////DRAFT /////////////////
 
 
