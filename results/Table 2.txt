@@ -1,0 +1,15 @@
+Table 2 Group comparisons of procedural predictors (not used for matching) in the original and matched cohorts 
+
+|                                         |     Original cohort     N=413    |                           |                |     Matched cohort     N=254a    |                           |                |
+|-----------------------------------------|----------------------------------|---------------------------|----------------|----------------------------------|---------------------------|----------------|
+|                                         |     Cohen group                  |     Lich‒Gregoir group    |     P value    |     Cohen group                  |     Lich‒Gregoir group    |     P value    |
+|     Procedural predictors               |                                  |                           |                |                                  |                           |                |
+|     Treatment technique                 |     198   (47.9)                 |     215   (52.1)          |     -          |     127 (50.0)                   |     127 (50.0)            |     -          |
+|     Operative time, min                 |     115 (85-150)                 |     70 (67-80)            |     <0.001     |     130 (90-160)                 |     70 (66.5-80)          |     <0.001     |
+|     Ureteral stent   placement          |     106 (53.5)                   |     37 (17.2)             |     <0.001     |     57 (44.9)                    |     31 (24.4)             |     0.001      |
+|     Urethral catheter   placement       |     196   (99.0)                 |     208   (96.7)          |     0.221      |     125 (98.4)                   |     124 (97.6)            |     1.000      |
+|     Catheterization   duration, days    |     15.06 ± 16.96                |     6.15 ± 11.88          |     <0.001     |     12.55 ± 15.69                |     8.62 ± 14.18          |     0.037      |
+|     Hospital stays, days                |     5 (4.25-6)                   |     2 (2-4.5)             |     <0.001     |     5 (5-6)                      |     3 (2-5)               |     <0.001     |
+
+
+The data are presented as the means ± SDs, medians (IQRs) or frequencies (%); bold P values indicate statistical significance (P < 0.05); a The matched cohort represents 61.5% of the original cohort
