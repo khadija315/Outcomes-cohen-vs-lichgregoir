@@ -1,0 +1,46 @@
+Table 1 Group comparisons of children’s demographic, clinical, and surgeon characteristics (used for matching) in the original cohort 
+
+
+|                                                                 |     Overall     N=413    |     Cohen group     N=198    |     Lich‒Gregoir group     N=215    |     P value    |
+|-----------------------------------------------------------------|--------------------------|------------------------------|-------------------------------------|----------------|
+|     Children’s demographic   characteristics                    |                          |                              |                                     |                |
+|     Age at surgery,   years                                     |     8 (6-9)              |     8 (4.25-9)               |     8 (6-9)                         |     0.004      |
+|     Gender                                                      |                          |                              |                                     |     0.355      |
+|                    Male                                         |     236   (57.1)         |     108   (54.5)             |     128   (59.5)                    |                |
+|                    Female                                       |     177   (42.9)         |     90 (45.5)                |     87 (40.5)                       |                |
+|     BMI, kg/m2                                                  |     14.1 (13.6-18.1)     |     15.1 (13.5-20.8)         |     13.9 (13.6-15)                  |     <0.001     |
+|     Children’s clinical   characteristics                       |                          |                              |                                     |                |
+|     Prior injection                                             |     44 (10.7)            |     19 (9.6)                 |     25 (11.6)                       |     0.611      |
+|     Indications for   surgery                                   |                          |                              |                                     |     <0.001     |
+|                    Repeated breakthrough UTI                    |     215 (52.1)           |     94 (47.5)                |     121 (56.3)                      |                |
+|                    Symptomatic high-grade (III-V) refluxa       |     133 (32.2)           |     58 (29.3)                |     75 (34.9)                       |                |
+|                    Poor compliance to medical   treatment       |     19 (4.6)             |     10 (5.1)                 |     9 (4.2)                         |                |
+|                    Ineffective or poorly tolerated   CAP        |     13 (3.1)             |     11 (5.6)                 |     2 (0.9)                         |                |
+|                    Othersb                                      |     33 (8)               |     25 (12.5)                |     8 (3.7)                         |                |
+|     VUR grade                                                   |                          |                              |                                     |     0.184      |
+|                    III                                          |     20 (4.8)             |     11 (5.6)                 |     9 (4.2)                         |                |
+|                    IV                                           |     126   (30.5)         |     52 (26.3)                |     74 (34.4)                       |                |
+|                    V                                            |     267   (64.6)         |     135   (68.2)             |     132   (61.4)                    |                |
+|     VUR on right   side                                         |     251   (60.8)         |     118   (59.6)             |     133   (61.9)                    |     0.711      |
+|     Ureteral   dilation ≥ 7mmc                                  |     316   (76.5)         |     166   (83.8)             |     150   (69.8)                    |     0.001      |
+|     VUR phase on   VCUG at                                      |                          |                              |                                     |     <0.001     |
+|                    Voiding                                      |     227   (55.0)         |     113   (57.1)             |     114   (53.0)                    |                |
+|                    Filling                                      |     69 (16.7)            |     1 (0.5)                  |     68 (31.6)                       |                |
+|                    Filling and voiding                          |     117   (28.3)         |     84 (42.4)                |     33 (15.3)                       |                |
+|     Preop febrile   UTIs                                        |     405   (98.1)         |     191   (96.5)             |     214   (99.5)                    |     0.057      |
+|     Number of preop UTIs                                        |                          |                              |                                     |     <0.001     |
+|                    1                                            |     24 (5.8)             |     16 (8.1)                 |     8 (3.7)                         |                |
+|                    2                                            |     101   (24.5)         |     68 (34.3)                |     33 (15.3)                       |                |
+|                    ≥ 3                                          |     288 (69.7)           |     114   (57.6)             |     174   (80.9)                    |                |
+|     Preop APN on DMSAd                                          |     88 (21.3)            |     68 (34.3)                |     20 (9.3)                        |     <0.001     |
+|     Preop renal scarring   on affected side                     |     138   (33.4)         |     94 (47.5)                |     44 (20.5)                       |     <0.001     |
+|     Surgeon characteristics                                     |                          |                              |                                     |                |
+|     Surgeon experience                                          |                          |                              |                                     |     <0.001     |
+|                    <50 operations                               |     54 (13.1)            |     45 (22.7)                |     9 (4.2)                         |                |
+|                    50 – 100 operations                          |     274 (66.3)           |     138   (69.7)             |     136   (63.3)                    |                |
+|                    ≥ 100 operations                             |     85 (20.6)            |     15 (7.6)                 |     70 (32.6)                       |                |
+
+
+
+The data are presented as the means ± SDs, medians (IQRs) or frequencies (%); bold P values indicate statistical significance (P < 0.05); a Symptoms refer to clinical signs, such as recurrent UTIs, kidney damage, hydronephrosis, or pain, associated with reflux; b Other indications include reflux nephropathy, persistent reflux >2 years, worsening renal function, the presence of new renal scars on DMSA, girls with persistent VUR after puberty, VUR recurrence after injection, and parental preference; cNone of the cases involved severe megaureters; d21% of values were missing and imputed using KNN imputation; BMI, body mass index; Preop, preoperative; UTI, urinary tract infection; CAP, continuous antibiotic prophylaxis; DMSA, Dimercaptosuccinic acid; VUR, vesicoureteral reflux; VCUG, voiding cystourethrogram; APN, acute pyelonephritis
+
